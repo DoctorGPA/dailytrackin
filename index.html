@@ -1,4 +1,5 @@
 <!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Daily Trackn’</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cg transform='translate(.4 1.2) scale(.25)' stroke-linejoin='round' stroke-linecap='round'%3E%3Cpath d='M34 94 C18 94 10 80 15 68 C19 58 28 55 36 57 C37 42 49 33 62 36 C70 24 90 26 95 40 C109 39 119 51 114 64 C122 74 116 94 100 94 Z' fill='%23C6E7FF' stroke='%23426A8A' stroke-width='10'/%3E%3Ccircle cx='50' cy='70' r='7' fill='%23426A8A'/%3E%3Ccircle cx='82' cy='70' r='7' fill='%23426A8A'/%3E%3Cpath d='M58 79 Q62 86 66 79 Q70 86 74 79' fill='none' stroke='%23426A8A' stroke-width='6'/%3E%3C/g%3E%3C/svg%3E">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
 <style>
@@ -75,7 +76,7 @@ const NAV=[['home','🏠','Home'],['diary','📔','My Diary'],['network','🌍',
 function go(p){if(p=='rate'){const c=rc();if(c>=1&&!S.rv.some(r=>r.c==c))ratePop(c);else toast('Thanks — you have already rated this cycle 💛');return}page=p;if(p=='diary'&&!e)load(sel);render();scrollTo(0,0);$('#frame').scrollTop=0}
 function render(){document.documentElement.dataset.theme=S.theme;
 if(!S.user||(S.auth&&!ok()))return auth();const un=S.notifs.filter(n=>!n.r).length;
-$('#app').innerHTML=`<nav><div class="logo">☁️ Daily Trackn’<small>track your days, feelings & memories</small></div><a class="me" onclick="go('profile')"><span class="av" style="width:30px;height:30px;font-size:16px">${myAv()}</span>${esc(S.user.n)}</a>
+$('#app').innerHTML=`<nav><div class="logo">${LOGO(34)} Daily Trackn’<small>track your days, feelings & memories</small></div><a class="me" onclick="go('profile')"><span class="av" style="width:30px;height:30px;font-size:16px">${myAv()}</span>${esc(S.user.n)}</a>
 ${NAV.map(n=>`<a class="${page==n[0]?'on':''}" onclick="go('${n[0]}')">${n[1]} ${n[2]}${n[0]=='notifs'&&un?`<span class="dot">${un}</span>`:''}</a>`).join('')}
 <a class="btn" style="margin-top:auto;justify-content:center" onclick="sel=today();load(sel);go('diary')">✏️ Today’s diary</a></nav><main>${P[page]()}</main>`;
 if(page=='diary')initDiary();if(page=='messages'){const m=$('.msgs');if(m)m.scrollTop=1e9}}
@@ -83,7 +84,7 @@ const P={};
 /* ---------- ONBOARDING / PROFILE ---------- */
 let ob={a:'🐱',tags:[]};
 function onboard(edit){const u=edit?S.user:{};ob.a=u.a||ob.a;ob.tags=u.tags||ob.tags;if(edit&&ob.img===undefined)ob.img=u.img||'';
-const h=`<div class="card" style="max-width:480px;margin:20px auto"><h1>${edit?'Edit profile':'Welcome to Daily Trackn’ ☁️'}</h1><p>A little space to track your days, feelings & memories.</p>${edit?'':'<div class="row"><button class="btn">Sign Up</button><button class="btn g" onclick="noAcc()">Log In</button></div>'}
+const h=`<div class="card" style="max-width:480px;margin:20px auto"><h1>${edit?'Edit profile':'Welcome to Daily Trackn’ '+LOGO(34)}</h1><p>A little space to track your days, feelings & memories.</p>${edit?'':'<div class="row"><button class="btn">Sign Up</button><button class="btn g" onclick="noAcc()">Log In</button></div>'}
 <p><b>Avatar</b></p><div class="row"><span class="av" style="width:84px;height:84px;font-size:46px">${myAv(ob)}</span><div><input type="file" id="af" accept="image/jpeg,image/png,image/webp" hidden onchange="pickImg(this.files[0]);this.value=''"><button class="btn" onclick="$('#af').click()">⬆ Upload from device</button> ${ob.img?'<button class="btn g" onclick="rmImg()">Remove</button>':''}<br><small>JPG, PNG or WEBP · crop & zoom next</small></div></div><p><b>Cute defaults</b><br>${['🐱','🐰','🐻','🦊','🐼','🐥','🌸','⭐'].map(a=>`<span class="av" style="cursor:pointer;${a==ob.a?'outline:3px solid var(--deep)':''}" onclick="ob.a='${a}';obRe()">${a}</span>`).join(' ')}</p>
 <p>Nickname *<input id="on" value="${esc(u.n)}" maxlength="20"></p>${edit?'':'<p>Gmail * (shown on your profile)<input id="oe" type="email" placeholder="you@gmail.com"></p><p>Password * (8+ characters)<input id="opw" type="password"></p>'}<p>Date of birth * <input id="od" type="date" value="${u.dob||''}" max="${today()}" oninput="$('#oz').textContent=zod(this.value)"> <b id="oz">${zod(u.dob)}</b></p>
 <p>MBTI *<select id="om"><option value="">Choose…</option>${['INTJ','INTP','ENTJ','ENTP','INFJ','INFP','ENFJ','ENFP','ISTJ','ISFJ','ESTJ','ESFJ','ISTP','ISFP','ESTP','ESFP','Secret'].map(m=>`<option ${u.mbti==m?'selected':''}>${m}</option>`).join('')}</select></p>
@@ -213,6 +214,7 @@ m.querySelector('#kn').onclick=()=>m.remove();m.querySelector('#ky').onclick=()=
 function applyDev(){const nr=innerWidth<760;$('#dev').className=nr?'bare m':S.dev=='phone'?'p m':'d';document.querySelectorAll('.sw button').forEach(b=>b.classList.toggle('on',b.dataset.m==(S.dev=='phone'?'phone':'desktop')))}
 const setDev=m=>{S.dev=m;save();applyDev()};
 applyDev();addEventListener('resize',applyDev);
+const LOGO=s=>`<svg viewBox="0 0 128 128" width="${s}" height="${s}" style="vertical-align:middle;flex:none" aria-hidden="true"><g transform="translate(-6 -2) scale(1.1)" stroke-linejoin="round" stroke-linecap="round"><path d="M34 94 C18 94 10 80 15 68 C19 58 28 55 36 57 C37 42 49 33 62 36 C70 24 90 26 95 40 C109 39 119 51 114 64 C122 74 116 94 100 94 Z" fill="#EAF6FF" stroke="#426A8A" stroke-width="5"/><path d="M44 52 C52 46 62 44 70 46" fill="none" stroke="#fff" stroke-width="5"/><circle cx="52" cy="70" r="4.6" fill="#426A8A"/><circle cx="80" cy="70" r="4.6" fill="#426A8A"/><circle cx="43" cy="79" r="5" fill="#FFDCE8"/><circle cx="89" cy="79" r="5" fill="#FFDCE8"/><path d="M59 77 Q62.5 83.5 66 77 Q69.5 83.5 73 77" fill="none" stroke="#426A8A" stroke-width="3.4"/></g></svg>`;
 const ok=()=>{try{return sessionStorage.dtn_ok}catch(e){return 1}};
 const hash=async s=>[...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s)))].map(b=>b.toString(16).padStart(2,'0')).join('');
 async function mkAuth(em,pw){const salt=[...crypto.getRandomValues(new Uint8Array(8))].join('');S.auth={email:em,salt,h:await hash(pw+salt)};try{sessionStorage.dtn_ok=1}catch(e){}save()}
